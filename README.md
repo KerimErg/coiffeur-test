@@ -4,10 +4,12 @@ Site one-page en HTML / CSS / JavaScript vanilla. Aucun framework, aucune étape
 de build, aucune dépendance à installer : ouvrez `index.html` dans un navigateur.
 
 ```
-index.html   structure, contenus, SEO local et JSON-LD
-style.css    palette, échelle typographique, layout, motion
-script.js    séquence d'ouverture, raccord au scroll, reveals, menu, formulaire
-og.png       image de partage (Open Graph), générée depuis le design du site
+index.html    structure, contenus, SEO local et JSON-LD
+style.css     palette, échelle typographique, layout, motion
+script.js     séquence d'ouverture, raccord au scroll, reveals, menu, formulaire
+og.png        image de partage (Open Graph), générée depuis le design du site
+img/          photographies en WebP, deux largeurs par emplacement
+LICENCES.txt  provenance et licence du pack photo
 ```
 
 ## Coordonnées publiées
@@ -52,6 +54,45 @@ se trace à l'entrée dans le viewport.
 Archivo (labeur), IBM Plex Mono (timecodes et tarifs). Google Fonts,
 `font-display: swap`.
 
+## Photographies
+
+Onze photographies sous licence **CC0** (domaine public : usage commercial
+libre, aucune attribution obligatoire). Provenance complète dans
+`LICENCES.txt`, conservé à la racine.
+
+| Emplacement | Fichier source | Ratio servi |
+| --- | --- | --- |
+| Équipe — Jonathan | `02-barber-cutting` | 3/4 |
+| Équipe — Emilie | `05-hair-cut` | 3/4 |
+| Équipe — Julien | `03-barber-window` | 3/4 |
+| Galerie 01 | `13-braided-hair` | 3/4 |
+| Galerie 02 | `10-woman-haircut` | 16/10 |
+| Galerie 03 | `06-scissors-comb` | 1/1 |
+| Galerie 04 | `01-barber-razor` | 1/1 |
+| Galerie 05 | `08-salon-seats` | 3/4 |
+| Galerie 06 | `09-stylist-drying` | 1/1 |
+| Galerie 07 | `11-man-barber` | 16/10 |
+| Galerie 08 | `04-hairdresser-cut` | 1/1 |
+
+Trois photos du pack ne sont pas utilisées, faute d'emplacement au bon ratio :
+`07-salon-interior`, `12-hairdresser` et `14-mannequins`.
+
+Chaque emplacement existe en deux largeurs WebP, déclarées en `srcset` avec un
+`sizes` correspondant à la largeur réellement occupée. Résultat mesuré : **47 Ko**
+de photos sur un écran de bureau standard, 108 Ko en retina, 141 Ko sur un
+mobile retina — contre 1,3 Mo pour les JPEG d'origine. Recadrage centré au
+ratio cible, sans agrandissement au-delà de la taille source.
+
+Pas de repli JPEG : le WebP est reconnu par tous les navigateurs courants
+depuis 2020. Les recadrages se régénèrent en relançant la conversion sur le
+pack d'origine, décrit dans `LICENCES.txt`.
+
+**Ce sont des images d'illustration, pas le salon ni son équipe.** Les trois
+visuels placés sous les noms de Jonathan, Emilie et Julien seront lus comme
+leurs portraits : ils doivent être remplacés par de vraies photographies de
+l'équipe avant que le site ne soit rendu public. Les `alt` décrivent
+volontairement le geste photographié, sans affirmer l'identité des personnes.
+
 ## Qualité
 
 - Responsive vérifié de 320 px à 1920 px, sans débordement horizontal.
@@ -67,12 +108,6 @@ Archivo (labeur), IBM Plex Mono (timecodes et tarifs). Google Fonts,
 - Zéro erreur console.
 
 ## Reste à faire avant mise en ligne
-
-**Photos.** Les portraits de l'équipe et les huit visuels de la planche contact
-pointent encore vers `picsum.photos` : ce sont des gabarits. Remplacez-les par
-les photos du salon en gardant les ratios (portraits 3/4 ; galerie : `01` et
-`05` en 3/4, `02` et `07` en 16/10, les autres en carré) et réécrivez les `alt`
-en décrivant la prestation visible.
 
 **Coordonnées GPS.** Le JSON-LD ne contient volontairement pas de bloc `geo` :
 une valeur approximative placerait le salon au mauvais endroit dans les
@@ -100,3 +135,7 @@ citées.
 **Formulaire.** La demande de créneau est validée côté client uniquement — nom,
 téléphone, prestation, et créneau confronté aux horaires réels — mais n'envoie
 rien. Brancher un backend ou un service de prise de rendez-vous.
+
+**Photographies de l'équipe.** Voir la section *Photographies* : les visuels
+actuels sont des images d'illustration sous CC0, à remplacer par de vraies
+photographies de Jonathan, Emilie et Julien.
