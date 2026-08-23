@@ -6,7 +6,7 @@ de build, aucune dépendance à installer : ouvrez `index.html` dans un navigate
 ```
 index.html    structure, contenus, SEO local et JSON-LD
 style.css     palette, échelle typographique, layout, motion
-script.js     séquence d'ouverture, raccord au scroll, reveals, menu, formulaire
+script.js     ouverture, tracé du fil au scroll, reveals, menu, formulaire
 og.png        image de partage (Open Graph), générée depuis le design du site
 img/          photographies en WebP, deux largeurs par emplacement
 LICENCES.txt  provenance et licence du pack photo
@@ -35,31 +35,70 @@ navigation Google Maps vers les coordonnées ci-dessus, via l'URL documentée
 
 ## Direction artistique
 
-**Concept — le studio de montage.** V.O comme version originale : le salon est
-traité comme une salle de montage, où « coupe » appartient aux deux métiers.
-D'où la lumière du faisceau, le magenta et le cyan du tirage argentique, les
-timecodes, les bobines.
+**Concept — le fil.** V.O comme version originale. Un salon vend une matière :
+le cheveu. Le site en fait son interface. Une mèche unique, tracée en SVG,
+descend la page d'un bout à l'autre — repère de lecture, jauge de progression
+et couture entre les sections à la fois. Tout le reste — papier chaud posé sur
+espresso, Didone à déliés très fins, un seul accent cuivré — n'est là que pour
+la laisser respirer.
 
-**Élément signature — le raccord.** Le titre du hero est scindé par une
-diagonale : au chargement les deux moitiés se raccordent, au scroll elles se
-redécoupent et glissent en sens inverse. La même diagonale devient l'arête
-entre chaque section, alternée champ / contrechamp, avec un trait magenta qui
-se trace à l'entrée dans le viewport.
+**Élément signature — la mèche.** Ses points de passage ne sont pas dessinés à
+l'avance : ce sont les sections réelles de la page, mesurées à chaque mise en
+page. La courbe épouse donc le document plutôt qu'un tracé figé, et suit les
+reflows. Un doublon cuivré, superposé au même chemin, se remplit au fil de la
+lecture (`pathLength="1"` + `stroke-dashoffset`) : c'est la barre de
+progression. Un nœud s'allume à l'entrée de chaque section. Au pointeur, la
+mèche ballotte doucement du côté opposé au curseur. Sur les feuilles claires
+elle s'assombrit pour rester lisible.
 
-**Palette**
+La mèche vit dans la marge de reliure et ne croise jamais le texte : sa
+gouttière est mesurée sur la colonne de texte réelle, pas devinée en
+pourcentage — la contrainte tient donc de 320 px à 1920 px. Le hero comme les
+bandes sombres adoptent le retrait des feuilles, si bien que l'axe de texte est
+le même sur toute la page, à toutes les largeurs.
 
-| Nom | Hex | Usage |
-| --- | --- | --- |
-| Bleu Salle | `#141C33` | fond des séquences sombres |
-| Nitrate | `#0D1426` | footer, planche contact, formulaire |
-| Blanc Écran | `#E9ECF2` | fond des séquences claires |
-| Faisceau | `#D9B36C` | appels à l'action, prix, accents |
-| Magenta Argentique | `#B8336A` | le raccord, les intertitres |
-| Cyan Tirage | `#45B4C9` | durées, contrepoint |
+Deux pièges valent d'être signalés, tous deux corrigés dans `courbe()` et
+`drawFil()`. Une interpolation de Catmull-Rom naïve **surcorrige** dès que les
+points sont inégalement espacés — et une section fait ici dix fois la hauteur
+d'une autre : la courbe partait en boucle hors de la page. Les tangentes sont
+donc normalisées et la longueur des poignées bornée à une fraction du segment.
+Par ailleurs une image de défilement fait **d'abord toutes les mesures, ensuite
+toutes les écritures** : mesurer après avoir écrit forçait un recalcul de mise
+en page à chaque image.
 
-**Typographie** — Big Shoulders Display (display, très grand uniquement),
-Archivo (labeur), IBM Plex Mono (timecodes et tarifs). Google Fonts,
-`font-display: swap`.
+**Les sections sont des feuilles.** Plus de bandes pleine largeur découpées en
+diagonale : les sections claires sont des feuilles de papier chaud posées sur
+l'espresso, filet cuivré au bord supérieur et ombre profonde. Les sections
+sombres laissent le fond de page traverser.
+
+**Palette** — un seul accent. Le magenta, le cyan et l'or de la V2 se
+partageaient le rôle d'accent sans hiérarchie ; ici le cuivre le tient seul,
+parce que c'est le reflet qu'on cherche dans un cheveu.
+
+| Nom | Hex | Usage | Contraste |
+| --- | --- | --- | --- |
+| Espresso | `#14100E` | fond de page, brun-noir chaud | — |
+| Encre | `#0B0908` | cartouches, formulaire, générique | — |
+| Craie | `#F4EFE7` | papier des feuilles claires | 16,3 sur espresso |
+| Cuivre | `#C2703C` | l'accent : appels à l'action, la mèche | 5,1 (libellé sur aplat) |
+| Cuivre clair | `#E0996A` | accent sur fond sombre | 8,1 sur espresso |
+| Cuivre sombre | `#8F4A20` | accent sur papier | 5,8 sur craie |
+| Fumée | `#A79A8C` | texte secondaire sur sombre | 6,9 sur espresso |
+| Cendre | `#6B6055` | texte secondaire sur papier | 5,4 sur craie |
+
+**Typographie** — deux familles au lieu de trois. **Bodoni Moda** en variable
+pour tout le titrage : dans un Didone, le délié *est* un cheveu, et l'axe
+optique (`opsz`) permet de tenir le même caractère du chapeau de 11 px au titre
+de 270 px. **Instrument Sans** pour le labeur et les labels — les anciens
+timecodes en monospace sont devenus des capitales interlettrées du même
+grotesque, ce qui supprime au passage une famille et ses requêtes.
+
+Un détail de composition mérite d'être noté : le prix est découpé en trois
+morceaux dans le balisage (`dès`, le chiffre, le symbole). Ce n'est pas de la
+coquetterie. Dans un Didone, les barres de l'euro sont des déliés, et au corps
+des tarifs elles s'évaporent — « 58 € » se lisait « 58 C ». Le chiffre garde le
+Bodoni, `dès` et `€` passent au grotesque. Le compteur d'animation n'a alors
+qu'un nœud de texte à écrire, et le découpage tient aussi sans JavaScript.
 
 ## Photographies
 
@@ -100,98 +139,127 @@ leurs portraits : ils doivent être remplacés par de vraies photographies de
 l'équipe avant que le site ne soit rendu public. Les `alt` décrivent
 volontairement le geste photographié, sans affirmer l'identité des personnes.
 
-## V2 — la séance
+## V3 — les dispositifs
 
-Le site est traité comme une projection. Sept dispositifs, tous en vanilla, sans
-la moindre dépendance.
+Sept dispositifs, tous en vanilla, sans la moindre dépendance. Les effets de la
+V2 ont été conservés, transformés ou remplacés selon ce que la direction
+exigeait — ce que chacun est devenu est indiqué au passage.
 
-**Amorce.** Compte à rebours de pellicule au premier chargement : cercle qui
-balaie, 3 → 2 → 1 en display, tremblement de projecteur, rayures, flash blanc.
-2,2 s, interrompue au clic, à Échap ou par « Passer l'amorce ». Mémorisée en
-`sessionStorage` : elle ne rejoue pas dans la même session. Elle est aussi
-sautée quand on arrive sur une ancre (`#reservation`, `#prestations`) et sur
-connexion contrainte (`saveData`, 2G) — celui qui vient voir les tarifs n'a pas
-à regarder un générique.
+**Ouverture** *(remplace l'amorce de pellicule).* Au premier chargement, la
+mèche se tend seule à l'écran sous la marque, puis le rideau se retire par le
+haut : la page était déjà là, dessous. 1,5 s au lieu de 2,2 s, et surtout le
+motif d'ouverture n'est pas jetable — c'est le fil permanent du site qui
+s'installe. Interrompue au clic, à Échap, à Entrée ou par « Passer
+l'ouverture ». Mémorisée en `sessionStorage` : elle ne rejoue pas dans la même
+session. Sautée aussi quand on arrive sur une ancre (`#reservation`,
+`#prestations`) et sur connexion contrainte (`saveData`, 2G) — celui qui vient
+voir les tarifs n'a pas à regarder un générique.
 
-**Grain et vignettage.** Un seul canvas fixe, trois tuiles de bruit de 128 px
-tirées au chargement, redessinées à 12 images/seconde avec un décalage
-aléatoire, en `mix-blend-mode: overlay` à 5 % d'opacité. Mis en pause quand
-l'onglet passe en arrière-plan. Vignettage en dégradé radial sur les bandes
-sombres uniquement.
+**Le fil.** Décrit en détail plus haut. Un `<svg>` fixe en `viewBox` 0→1000
+étiré au viewport (`preserveAspectRatio="none"` + `vector-effect`, pour garder
+une épaisseur constante malgré l'étirement non uniforme), deux chemins et sept
+cercles. Une seule chaîne `d` reconstruite par image de défilement.
 
-**Sous-titres V.O.** Six phrases s'écrivent lettre par lettre à l'entrée dans le
-viewport, sur une plaque de sous-titre précédée d'un tiret cadratin, curseur
-clignotant pendant la frappe. Le texte réel reste dans le DOM en `.sr-only` et
-la version animée porte `aria-hidden` : les lecteurs d'écran reçoivent la phrase
-entière, jamais une suite de lettres. Les espaces sont de vrais nœuds texte,
-sans quoi la plaque ne pourrait plus revenir à la ligne.
+**Grain et lumière** *(le canvas est retiré).* Le grain argentique animé à 12
+images/seconde coûtait un remplissage plein écran par image ; il est remplacé
+par un bruit `feTurbulence` en SVG inline — aucune requête, aucun canvas, aucun
+`requestAnimationFrame`. Le budget récupéré est passé au fil et à une lampe qui
+suit le curseur : un simple dégradé radial piloté par deux variables CSS, donc
+sans reflow, desktop au pointeur fin uniquement. Vignettage en dégradé radial
+fixe sur le fond de page.
 
-**Bande de projection.** La galerie est un ruban de pellicule horizontal :
-perforations, photogrammes, `PLAN 01` à `PLAN 08` en mono. Au-delà de 900 px et
-si le mouvement est autorisé, la section s'épingle et le défilement vertical est
+**Lignes V.O** *(la plaque de sous-titre disparaît).* Six phrases s'écrivent
+lettre par lettre à l'entrée dans le viewport, précédées d'un tiret cadratin,
+curseur clignotant pendant la frappe. Le filet sous chaque ligne a été retiré :
+sur un paragraphe qui se replie, il soulignait des lignes encore vides. Le
+texte réel reste dans le DOM en `.sr-only` et la version animée porte
+`aria-hidden` : les lecteurs d'écran reçoivent la phrase entière, jamais une
+suite de lettres. Les espaces sont de vrais nœuds texte, sans quoi la phrase ne
+pourrait plus revenir à la ligne.
+
+**Les réalisations au rail** *(la pellicule devient une suspension).* Les
+perforations et les `PLAN 01` ont laissé place à un rail cuivré d'où chaque
+photographie pend par un fil, à des hauteurs volontairement inégales. La
+mécanique, elle, est conservée telle quelle : au-delà de 900 px et si le
+mouvement est autorisé, la section s'épingle et le défilement vertical est
 traduit en défilement horizontal (`position: sticky` + `transform`), avec barre
-de progression et compteur de plan. Partout ailleurs — mobile, reduced-motion,
-sans JS — c'est un défileur horizontal natif avec `scroll-snap`. Dans les deux
-cas le ruban est atteignable au clavier : flèches pour avancer plan par plan,
-`Début` et `Fin` pour les extrémités.
+de progression et compteur. Partout ailleurs — mobile, reduced-motion, sans JS
+— c'est un défileur horizontal natif avec `scroll-snap`. Dans les deux cas le
+ruban est atteignable au clavier : flèches pour avancer photo par photo,
+`Début` et `Fin` pour les extrémités. Le rail est posé dans le flux, juste
+avant la liste : il tombe donc au bon endroit dans les deux modes, sans calcul.
 
-**Curseur de coupe.** Point lumineux à inertie, ciseaux ouverts sur les éléments
-cliquables qui se referment au clic, œilleton de visée sur les photos. Desktop
-au pointeur fin uniquement ; la première tabulation rend la main au curseur
-natif.
+**Curseur** *(les ciseaux deviennent un anneau).* Point cuivré à inertie ;
+anneau sur les éléments cliquables ; l'anneau s'étire en cheveu vertical sur
+les photographies. Desktop au pointeur fin uniquement ; la première tabulation
+rend la main au curseur natif.
 
-**Micro-interactions.** Boutons magnétiques dans un rayon de 80 px avec retour
-élastique ; trait de navigation coupé en deux au survol ; tarifs qui défilent
-comme un timecode à l'entrée dans le viewport ; changement de bobine — sursaut
-vertical de 150 ms et bouffée de grain — entre les sections clés ; titres
-révélés par une lame diagonale.
+**Micro-interactions.** Les boutons magnétiques ont été retirés — ils
+déplaçaient la cible sous le curseur, et le dessin en pilule cuivrée n'en avait
+pas besoin. Restent : le survol d'une ligne de tarif qui tire un cheveu depuis
+les deux bords à la fois et décale la ligne ; les tarifs qui se comptent en
+montant à l'entrée dans le viewport ; les titres révélés par un balayage
+vertical depuis leur ligne de base ; le filet du chapeau qui se tire ; la mèche
+de lumière qui balaie un portrait au survol.
 
-**Générique de fin.** Le pied de page déroule un générique en boucle, arrêté au
-survol comme au focus clavier, et mis en pause hors écran. Mentions légales et
-réseaux restent en clair en dessous.
+**Générique de fin** *(conservé).* Le pied de page déroule un générique en
+boucle, arrêté au survol comme au focus clavier, et mis en pause hors écran.
+Mentions légales et réseaux restent en clair en dessous.
+
+**Les photographies gardent leur couleur.** La V2 passait portraits et galerie
+en `grayscale(1)` sous un voile coloré en `mix-blend-mode: screen`. C'était une
+décision qui travaillait contre le commerce : un salon vend de la couleur et de
+la matière de cheveu. Le voile cuivré est désormais léger et se lève au survol.
 
 ### Ce qui a été écarté, et pourquoi
 
 Le brief demandait un **scroll inertiel sur un wrapper transformé** (lerp ~0,08).
 Il n'a pas été fait ainsi, pour deux raisons. La première est technique :
 `position: sticky` ne fonctionne pas à l'intérieur d'un ancêtre transformé, et
-c'est exactement ce dont la bande de projection épinglée a besoin — les deux
+c'est exactement ce dont la bande des réalisations épinglée a besoin — les deux
 effets s'excluent. La seconde est d'usage : détourner le défilement casse la
 recherche dans la page, le rebond natif, la molette des trackpads réglés par
 l'utilisateur, et pèse sur l'INP.
 
 L'inertie est donc portée par les **calques**, pas par la page : les couches de
 parallaxe rejoignent leur cible par lissage à 0,12 et traînent derrière le
-scroll, ce qui donne le même glissement de projection. Le défilement reste
+scroll, ce qui donne un glissement sans confisquer le défilement. Le défilement reste
 natif, la bande reste épinglable, le clavier reste intact.
 
 ### Coût mesuré
 
 Défilement scripté de la page entière, 6 s, Chromium à 1440×900 puis 375×760.
-Médiane sur trois passes ; l'image de référence est 16,7 ms (60 fps).
+Médiane sur trois passes ; l'image de référence est 16,7 ms (60 fps). Lighthouse
+en émulation mobile, polices servies en local (voir la réserve plus bas).
 
-| Mesure | V1 | V2 |
-| --- | --- | --- |
-| Image médiane, desktop | 16,7 ms | 16,7 ms |
-| Images > 17 ms, desktop | 0 – 0,6 % | 2 % |
-| Images > 17 ms, mobile 375 | 0,6 % | 1,1 % |
-| Lighthouse mobile — Performance | 98 | 97 |
-| Accessibilité / Bonnes pratiques / SEO | 100 / 100 / 100 | 100 / 100 / 100 |
-| FCP · LCP · TBT | 1,8 s · 1,9 s · 0 ms | 1,4 s · 1,7 s · 0 ms |
-| CLS | 0,029 | **0,001** |
-| Speed Index | 1,8 s | 3,6 s |
+| Mesure | V1 | V2 | V3 |
+| --- | --- | --- | --- |
+| Image médiane, desktop | 16,7 ms | 16,7 ms | 16,7 ms |
+| Images > 17 ms, desktop | 0 – 0,6 % | 2 % | 1,7 % |
+| Images > 17 ms, mobile 375 | 0,6 % | 1,1 % | 0 % |
+| Lighthouse mobile — Performance | 98 | 97 | 97 |
+| Accessibilité / Bonnes pratiques / SEO | 100 / 100 / 100 | 100 / 100 / 100 | 100 / 100 / 100 |
+| FCP · LCP · TBT | 1,8 s · 1,9 s · 0 ms | 1,4 s · 1,7 s · 0 ms | 2,0 s · 2,3 s · 0 ms |
+| CLS | 0,029 | 0,001 | **0** |
+| Speed Index | 1,8 s | 3,6 s | 2,7 s |
 
-Deux chiffres méritent un mot. Le **Speed Index double** : l'amorce couvre la
-page pendant 2,2 s, donc l'image ne se stabilise pas avant. C'est le prix de
-l'effet, pas un défaut d'exécution — les métriques de réactivité (TBT, CLS)
-s'améliorent. Le **CLS s'effondre à 0,001** parce que la mise en page se fait
-derrière l'amorce.
+Trois chiffres méritent un mot. Le **Speed Index revient de 3,6 s à 2,7 s** :
+l'ouverture ne couvre plus la page que 1,5 s au lieu de 2,2 s. Le **CLS tombe à
+zéro**, la mise en page se faisant derrière l'ouverture. Les **images longues
+disparaissent sur mobile** parce que le canvas de grain — un remplissage plein
+écran douze fois par seconde — a été remplacé par une texture statique ; ce qui
+reste sur desktop vient du `drop-shadow` de la mèche, réservé aux grands écrans
+pour cette raison.
 
-Le seul coût de compositing mesurable est le grain : le retirer ramène les
-images longues de 2 % à 0,7 % sur desktop. Le lever si besoin : supprimer le
-`mix-blend-mode`, ou descendre la cadence de 12 à 8 images/seconde.
+**Réserve sur la mesure.** Le conteneur de développement n'atteint pas
+`fonts.googleapis.com` : les polices ont été servies depuis un serveur local
+pour permettre l'audit. Le coût réseau tiers réel (résolution DNS, poignée de
+main TLS vers deux domaines) n'est donc pas compté, et FCP / LCP seront plus
+élevés en production — c'était déjà le cas des mesures V1 et V2, faites elles
+aussi hors ligne, si bien que la comparaison entre colonnes reste valable. Les
+`preconnect` vers les deux domaines sont en place dans `index.html`.
 
-### Sous-titres et avis clients
+### Lignes V.O et avis clients
 
 Le brief prévoyait de traiter les avis clients en répliques sous-titrées. La
 section a été retirée en amont faute de témoignages réels (voir *Reste à faire*).
@@ -203,8 +271,9 @@ les citations.
 - Responsive vérifié de 320 px à 1920 px, sans débordement horizontal.
 - HTML sémantique, un seul `h1`, `alt` sur toutes les images, `aria-label` sur
   les icônes, focus clavier visible, lien d'évitement.
-- Tous les couples de couleurs texte / fond passent le niveau AA
-  (rapport minimum mesuré : 4,77).
+- Tous les couples de couleurs texte / fond passent le niveau AA — rapport le
+  plus bas de la palette : 5,1, le libellé des boutons pleins sur l'aplat
+  cuivré (audit Lighthouse / axe : 100).
 - `prefers-reduced-motion` : animations et reveals désactivés, tout le contenu
   reste visible dans son état final.
 - Motion limitée à `transform` et `opacity`, scroll écouté en passif et lu dans
