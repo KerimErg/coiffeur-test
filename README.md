@@ -19,6 +19,7 @@ og.png       image de partage (Open Graph), générée depuis le design du site
 | E-mail | contact@salonstudiovo.fr |
 | Équipe | Jonathan (gérant · coiffeur), Emilie (colorimétrie), Julien (couleur & balayage) |
 | Horaires | mardi, mercredi, samedi 09:00–18:00 · jeudi, vendredi 10:00–20:00 · lundi et dimanche fermé |
+| Coordonnées | 48.6121619, 7.7513926 (fiche Google Maps du salon) |
 
 Les horaires sont écrits à trois endroits qui doivent rester cohérents : le
 tableau de la section Réserver, le `openingHoursSpecification` du JSON-LD, et la
@@ -73,15 +74,6 @@ pointent encore vers `picsum.photos` : ce sont des gabarits. Remplacez-les par
 les photos du salon en gardant les ratios (portraits 3/4 ; galerie : `01` et
 `05` en 3/4, `02` et `07` en 16/10, les autres en carré) et réécrivez les `alt`
 en décrivant la prestation visible.
-
-**Coordonnées GPS.** Le JSON-LD ne contient volontairement pas de bloc `geo` :
-une valeur approximative placerait le salon au mauvais endroit dans les
-résultats de recherche. Relevez le point exact sur Google Maps (clic droit →
-les deux nombres) et ajoutez, après le bloc `address` :
-
-```json
-"geo": { "@type": "GeoCoordinates", "latitude": 48.xxxxx, "longitude": 7.xxxxx },
-```
 
 **URL du site.** `canonical`, `og:url`, `og:image` et le champ `url` du JSON-LD
 pointent vers `https://kerimerg.github.io/coiffeur-test/`, l'adresse GitHub
