@@ -100,6 +100,104 @@ leurs portraits : ils doivent être remplacés par de vraies photographies de
 l'équipe avant que le site ne soit rendu public. Les `alt` décrivent
 volontairement le geste photographié, sans affirmer l'identité des personnes.
 
+## V2 — la séance
+
+Le site est traité comme une projection. Sept dispositifs, tous en vanilla, sans
+la moindre dépendance.
+
+**Amorce.** Compte à rebours de pellicule au premier chargement : cercle qui
+balaie, 3 → 2 → 1 en display, tremblement de projecteur, rayures, flash blanc.
+2,2 s, interrompue au clic, à Échap ou par « Passer l'amorce ». Mémorisée en
+`sessionStorage` : elle ne rejoue pas dans la même session. Elle est aussi
+sautée quand on arrive sur une ancre (`#reservation`, `#prestations`) et sur
+connexion contrainte (`saveData`, 2G) — celui qui vient voir les tarifs n'a pas
+à regarder un générique.
+
+**Grain et vignettage.** Un seul canvas fixe, trois tuiles de bruit de 128 px
+tirées au chargement, redessinées à 12 images/seconde avec un décalage
+aléatoire, en `mix-blend-mode: overlay` à 5 % d'opacité. Mis en pause quand
+l'onglet passe en arrière-plan. Vignettage en dégradé radial sur les bandes
+sombres uniquement.
+
+**Sous-titres V.O.** Six phrases s'écrivent lettre par lettre à l'entrée dans le
+viewport, sur une plaque de sous-titre précédée d'un tiret cadratin, curseur
+clignotant pendant la frappe. Le texte réel reste dans le DOM en `.sr-only` et
+la version animée porte `aria-hidden` : les lecteurs d'écran reçoivent la phrase
+entière, jamais une suite de lettres. Les espaces sont de vrais nœuds texte,
+sans quoi la plaque ne pourrait plus revenir à la ligne.
+
+**Bande de projection.** La galerie est un ruban de pellicule horizontal :
+perforations, photogrammes, `PLAN 01` à `PLAN 08` en mono. Au-delà de 900 px et
+si le mouvement est autorisé, la section s'épingle et le défilement vertical est
+traduit en défilement horizontal (`position: sticky` + `transform`), avec barre
+de progression et compteur de plan. Partout ailleurs — mobile, reduced-motion,
+sans JS — c'est un défileur horizontal natif avec `scroll-snap`. Dans les deux
+cas le ruban est atteignable au clavier : flèches pour avancer plan par plan,
+`Début` et `Fin` pour les extrémités.
+
+**Curseur de coupe.** Point lumineux à inertie, ciseaux ouverts sur les éléments
+cliquables qui se referment au clic, œilleton de visée sur les photos. Desktop
+au pointeur fin uniquement ; la première tabulation rend la main au curseur
+natif.
+
+**Micro-interactions.** Boutons magnétiques dans un rayon de 80 px avec retour
+élastique ; trait de navigation coupé en deux au survol ; tarifs qui défilent
+comme un timecode à l'entrée dans le viewport ; changement de bobine — sursaut
+vertical de 150 ms et bouffée de grain — entre les sections clés ; titres
+révélés par une lame diagonale.
+
+**Générique de fin.** Le pied de page déroule un générique en boucle, arrêté au
+survol comme au focus clavier, et mis en pause hors écran. Mentions légales et
+réseaux restent en clair en dessous.
+
+### Ce qui a été écarté, et pourquoi
+
+Le brief demandait un **scroll inertiel sur un wrapper transformé** (lerp ~0,08).
+Il n'a pas été fait ainsi, pour deux raisons. La première est technique :
+`position: sticky` ne fonctionne pas à l'intérieur d'un ancêtre transformé, et
+c'est exactement ce dont la bande de projection épinglée a besoin — les deux
+effets s'excluent. La seconde est d'usage : détourner le défilement casse la
+recherche dans la page, le rebond natif, la molette des trackpads réglés par
+l'utilisateur, et pèse sur l'INP.
+
+L'inertie est donc portée par les **calques**, pas par la page : les couches de
+parallaxe rejoignent leur cible par lissage à 0,12 et traînent derrière le
+scroll, ce qui donne le même glissement de projection. Le défilement reste
+natif, la bande reste épinglable, le clavier reste intact.
+
+### Coût mesuré
+
+Défilement scripté de la page entière, 6 s, Chromium à 1440×900 puis 375×760.
+Médiane sur trois passes ; l'image de référence est 16,7 ms (60 fps).
+
+| Mesure | V1 | V2 |
+| --- | --- | --- |
+| Image médiane, desktop | 16,7 ms | 16,7 ms |
+| Images > 17 ms, desktop | 0 – 0,6 % | 2 % |
+| Images > 17 ms, mobile 375 | 0,6 % | 1,1 % |
+| Lighthouse mobile — Performance | 98 | 97 |
+| Accessibilité / Bonnes pratiques / SEO | 100 / 100 / 100 | 100 / 100 / 100 |
+| FCP · LCP · TBT | 1,8 s · 1,9 s · 0 ms | 1,4 s · 1,7 s · 0 ms |
+| CLS | 0,029 | **0,001** |
+| Speed Index | 1,8 s | 3,6 s |
+
+Deux chiffres méritent un mot. Le **Speed Index double** : l'amorce couvre la
+page pendant 2,2 s, donc l'image ne se stabilise pas avant. C'est le prix de
+l'effet, pas un défaut d'exécution — les métriques de réactivité (TBT, CLS)
+s'améliorent. Le **CLS s'effondre à 0,001** parce que la mise en page se fait
+derrière l'amorce.
+
+Le seul coût de compositing mesurable est le grain : le retirer ramène les
+images longues de 2 % à 0,7 % sur desktop. Le lever si besoin : supprimer le
+`mix-blend-mode`, ou descendre la cadence de 12 à 8 images/seconde.
+
+### Sous-titres et avis clients
+
+Le brief prévoyait de traiter les avis clients en répliques sous-titrées. La
+section a été retirée en amont faute de témoignages réels (voir *Reste à faire*).
+Le composant `.vo` est prêt à les accueillir : il suffira d'ajouter `data-vo` sur
+les citations.
+
 ## Qualité
 
 - Responsive vérifié de 320 px à 1920 px, sans débordement horizontal.
