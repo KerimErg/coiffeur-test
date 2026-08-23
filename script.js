@@ -96,7 +96,7 @@
 
   /* ---------- 4. Reveals au scroll ---------- */
   var revealables = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
-  var bands = Array.prototype.slice.call(document.querySelectorAll('.band'));
+  var bands = Array.prototype.slice.call(document.querySelectorAll('.band, .site-footer'));
 
   if (!('IntersectionObserver' in window) || isReduced()) {
     revealables.forEach(function (el) { el.classList.add('is-in'); });
@@ -153,6 +153,13 @@
   if (form) {
     var ok = document.getElementById('form-ok');
 
+    // [ouverture, fermeture] en minutes, indexé par getDay() ; null = fermé
+    var HOURS = [null, null, [540, 1080], [540, 1080], [600, 1200], [600, 1200], [540, 1080]];
+    var DAYS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    function hhmm(min) {
+      return (min / 60 | 0) + 'h' + (min % 60 < 10 ? '0' : '') + (min % 60);
+    }
+
     var rules = {
       name: function (v) {
         if (!v.trim()) return 'Indiquez votre nom.';
@@ -171,8 +178,13 @@
         var d = new Date(v);
         if (isNaN(d.getTime())) return 'Date invalide.';
         if (d.getTime() < Date.now()) return 'Choisissez une date à venir.';
-        var day = d.getDay();
-        if (day === 0 || day === 1) return 'Le studio est fermé le dimanche et le lundi.';
+        var open = HOURS[d.getDay()];
+        if (!open) return 'Le studio est fermé le ' + DAYS[d.getDay()] + '.';
+        var minutes = d.getHours() * 60 + d.getMinutes();
+        // le dernier rendez-vous démarre au plus tard une demi-heure avant la fermeture
+        if (minutes < open[0] || minutes > open[1] - 30) {
+          return 'Le ' + DAYS[d.getDay()] + ', le studio ouvre de ' + hhmm(open[0]) + ' à ' + hhmm(open[1]) + '.';
+        }
         return '';
       }
     };
@@ -229,7 +241,7 @@
       var service = form.elements.service.value;
       if (ok) {
         ok.textContent = 'Merci ' + name + '. Votre demande pour « ' + service +
-          ' » est enregistrée : nous vous rappelons au 03 88 62 41 07 sous 24 h ouvrées pour confirmer le créneau.';
+          ' » est enregistrée : nous vous rappelons au 03 88 19 99 52 sous 24 h ouvrées pour confirmer le créneau.';
         ok.hidden = false;
       }
       form.reset();

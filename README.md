@@ -7,14 +7,29 @@ de build, aucune dépendance à installer : ouvrez `index.html` dans un navigate
 index.html   structure, contenus, SEO local et JSON-LD
 style.css    palette, échelle typographique, layout, motion
 script.js    séquence d'ouverture, raccord au scroll, reveals, menu, formulaire
+og.png       image de partage (Open Graph), générée depuis le design du site
 ```
+
+## Coordonnées publiées
+
+| | |
+| --- | --- |
+| Adresse | 18 route de Bischwiller, 67800 Bischheim |
+| Téléphone | 03 88 19 99 52 (`tel:+33388199952`) |
+| E-mail | contact@salonstudiovo.fr |
+| Équipe | Jonathan (gérant · coiffeur), Emilie (colorimétrie), Julien (couleur & balayage) |
+| Horaires | mardi, mercredi, samedi 09:00–18:00 · jeudi, vendredi 10:00–20:00 · lundi et dimanche fermé |
+
+Les horaires sont écrits à trois endroits qui doivent rester cohérents : le
+tableau de la section Réserver, le `openingHoursSpecification` du JSON-LD, et la
+constante `HOURS` de `script.js` qui refuse les créneaux hors ouverture.
 
 ## Direction artistique
 
-**Concept — le studio de montage.** « V.O » dit deux choses : les initiales de
-Vanessa Oberlé et « version originale ». Le salon est traité comme une salle de
-montage, où « coupe » appartient aux deux métiers. D'où la lumière du faisceau,
-le magenta et le cyan du tirage argentique, les timecodes, les bobines.
+**Concept — le studio de montage.** V.O comme version originale : le salon est
+traité comme une salle de montage, où « coupe » appartient aux deux métiers.
+D'où la lumière du faisceau, le magenta et le cyan du tirage argentique, les
+timecodes, les bobines.
 
 **Élément signature — le raccord.** Le titre du hero est scindé par une
 diagonale : au chargement les deux moitiés se raccordent, au scroll elles se
@@ -42,7 +57,7 @@ Archivo (labeur), IBM Plex Mono (timecodes et tarifs). Google Fonts,
 - Responsive vérifié de 320 px à 1920 px, sans débordement horizontal.
 - HTML sémantique, un seul `h1`, `alt` sur toutes les images, `aria-label` sur
   les icônes, focus clavier visible, lien d'évitement.
-- Tous les couples de couleurs texte / fond du site passent le niveau AA
+- Tous les couples de couleurs texte / fond passent le niveau AA
   (rapport minimum mesuré : 4,77).
 - `prefers-reduced-motion` : animations et reveals désactivés, tout le contenu
   reste visible dans son état final.
@@ -51,17 +66,37 @@ Archivo (labeur), IBM Plex Mono (timecodes et tarifs). Google Fonts,
 - Images en `loading="lazy"` avec `width` / `height` déclarés.
 - Zéro erreur console.
 
-## Données à remplacer avant mise en ligne
+## Reste à faire avant mise en ligne
 
-Le nom du salon et la ville sont réels ; **tout le reste est un placeholder
-crédible et doit être remplacé** :
+**Photos.** Les portraits de l'équipe et les huit visuels de la planche contact
+pointent encore vers `picsum.photos` : ce sont des gabarits. Remplacez-les par
+les photos du salon en gardant les ratios (portraits 3/4 ; galerie : `01` et
+`05` en 3/4, `02` et `07` en 16/10, les autres en carré) et réécrivez les `alt`
+en décrivant la prestation visible.
 
-- adresse, téléphone (`tel:+33388624107`), e-mail, numéro WhatsApp (`wa.me`) ;
-- noms et spécialités de l'équipe, avis clients, horaires ;
-- tarifs (ordres de grandeur premium en France, à confirmer par le salon) ;
-- photos : les `picsum.photos` servent de gabarits, à remplacer par les visuels
-  du salon (mêmes ratios) ;
-- coordonnées `geo` et `url` du JSON-LD, `og:image`, et le plan d'accès SVG.
+**Coordonnées GPS.** Le JSON-LD ne contient volontairement pas de bloc `geo` :
+une valeur approximative placerait le salon au mauvais endroit dans les
+résultats de recherche. Relevez le point exact sur Google Maps (clic droit →
+les deux nombres) et ajoutez, après le bloc `address` :
 
-Le formulaire de réservation est validé côté client uniquement et n'envoie
-rien : brancher un backend ou un service de prise de rendez-vous.
+```json
+"geo": { "@type": "GeoCoordinates", "latitude": 48.xxxxx, "longitude": 7.xxxxx },
+```
+
+**URL du site.** `canonical`, `og:url`, `og:image` et le champ `url` du JSON-LD
+pointent vers `https://kerimerg.github.io/coiffeur-test/`, l'adresse GitHub
+Pages par défaut de ce dépôt. À corriger si le site est publié sur un autre
+domaine. Pour activer Pages : *Settings → Pages → Source: Deploy from a branch
+→ `main` / `/ (root)`*.
+
+**Avis clients.** La section a été retirée faute de témoignages réels : publier
+des avis inventés sur la fiche d'un salon existant n'est pas envisageable. Le
+gabarit typographique (citations en display, mise en scène façon sous-titres)
+reste disponible dans l'historique — `git show a304530:index.html` pour le HTML
+et `git show a304530:style.css` pour les styles — et peut être remis en place
+dès que le salon fournit trois avis authentiques, avec l'accord des personnes
+citées.
+
+**Formulaire.** La demande de créneau est validée côté client uniquement — nom,
+téléphone, prestation, et créneau confronté aux horaires réels — mais n'envoie
+rien. Brancher un backend ou un service de prise de rendez-vous.
