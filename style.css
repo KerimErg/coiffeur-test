@@ -452,7 +452,7 @@ ul{ margin:0; padding:0; list-style:none; }
 .band--light .info-block__h{ color:var(--c-magenta); }
 .band--light .hours dt{ color:var(--c-graphite); }
 .band--light .hours dd{ color:var(--c-salle); }
-.band--light .map{ border-color:rgba(20,28,51,.16); }
+.band--light .map-card{ border-color:rgba(20,28,51,.16); }
 .info-block:first-child{ border-top:0; padding-top:0; }
 .info-block__h{ color:var(--c-faisceau); margin:0 0 .6rem; font-weight:500; }
 .info-block__b{ font-style:normal; margin:0; }
@@ -460,7 +460,20 @@ ul{ margin:0; padding:0; list-style:none; }
 .hours dt{ color:var(--c-perfo); font-size:.95rem; }
 .hours dd{ white-space:nowrap; }
 .hours dd{ margin:0; color:var(--c-ecran); }
-.map{ width:100%; height:auto; border:1px solid rgba(233,236,242,.14); }
+/* le plan et son lien d'itinéraire forment une seule cartouche sombre,
+   y compris posée sur une bande claire */
+.map-card{ background:var(--c-nitrate); border:1px solid rgba(233,236,242,.14); }
+.map{ width:100%; height:auto; display:block; }
+.map-card__go{
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:.85rem 1rem; text-decoration:none; color:var(--c-ecran);
+  font-family:var(--f-mono); font-size:var(--t-mono); letter-spacing:.14em; text-transform:uppercase;
+  border-top:1px solid rgba(233,236,242,.14);
+  transition:color .25s var(--ease), background-color .25s var(--ease);
+}
+.map-card__go:hover, .map-card__go:focus-visible{ color:var(--c-nitrate); background:var(--c-faisceau); }
+.map-card__go .ico{ width:.95rem; height:.95rem; transition:transform .3s var(--ease-cut); }
+.map-card__go:hover .ico{ transform:translate3d(2px,-2px,0); }
 
 /* cartouche sombre, y compris posée sur une bande claire : la couleur du texte
    ne doit pas être héritée de la section */

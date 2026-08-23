@@ -20,10 +20,16 @@ og.png       image de partage (Open Graph), générée depuis le design du site
 | Équipe | Jonathan (gérant · coiffeur), Emilie (colorimétrie), Julien (couleur & balayage) |
 | Horaires | mardi, mercredi, samedi 09:00–18:00 · jeudi, vendredi 10:00–20:00 · lundi et dimanche fermé |
 | Coordonnées | 48.6121619, 7.7513926 (fiche Google Maps du salon) |
+| Fiche Google | `maps.google.com/?cid=15147310127541780628` (`hasMap` du JSON-LD) |
 
 Les horaires sont écrits à trois endroits qui doivent rester cohérents : le
 tableau de la section Réserver, le `openingHoursSpecification` du JSON-LD, et la
 constante `HOURS` de `script.js` qui refuse les créneaux hors ouverture.
+
+Le plan d'accès est un schéma SVG dessiné à la main, pas une carte embarquée :
+aucun script tiers, aucun cookie. Le lien « Itinéraire » sous le plan ouvre la
+navigation Google Maps vers les coordonnées ci-dessus, via l'URL documentée
+`maps/dir/?api=1&destination=lat,lng` — stable, sans paramètre de session.
 
 ## Direction artistique
 
