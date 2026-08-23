@@ -24,10 +24,55 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Big+Shoulders+Display:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
+<script>
+/* Décide AVANT peinture si la séance s'ouvre : évite de montrer l'amorce
+   à quelqu'un qui revient, et d'en faire clignoter une trace sinon. */
+(function(){var d=document.documentElement;d.classList.add('js');try{
+  var c=navigator.connection;
+  if(!sessionStorage.getItem('vo-seance')                       /* déjà vue dans la session */
+     && !matchMedia('(prefers-reduced-motion: reduce)').matches /* mouvement refusé */
+     && !location.hash                                          /* on arrive droit sur les tarifs ou la réservation */
+     && !(c && (c.saveData || /2g/.test(c.effectiveType||''))))  /* connexion contrainte */
+    d.classList.add('is-seance');
+}catch(e){}})();
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141C33'/%3E%3Cpath d='M4 24 L28 8' stroke='%23B8336A' stroke-width='3'/%3E%3C/svg%3E">
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
+
+<div class="amorce" id="amorce" aria-hidden="true">
+  <div class="amorce__stage">
+    <svg class="amorce__leader" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+      <circle class="amorce__ring" cx="120" cy="120" r="104"/>
+      <circle class="amorce__sweep" cx="120" cy="120" r="104"/>
+      <path class="amorce__cross" d="M120 4 V236 M4 120 H236"/>
+      <path class="amorce__diag" d="M28 28 L212 212 M212 28 L28 212"/>
+    </svg>
+    <p class="amorce__count" id="amorce-count">3</p>
+  </div>
+  <p class="amorce__scratch" aria-hidden="true"><span></span><span></span><span></span></p>
+  <button class="amorce__skip" id="amorce-skip" type="button">Passer l'amorce</button>
+  <div class="amorce__flash" aria-hidden="true"></div>
+</div>
+
+<canvas class="grain" id="grain" aria-hidden="true"></canvas>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <span class="cursor__dot"></span>
+  <svg class="cursor__blades" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+    <g class="cursor__blade cursor__blade--a">
+      <path d="M10 40 L34 12"/><circle cx="8" cy="42" r="4.4"/>
+    </g>
+    <g class="cursor__blade cursor__blade--b">
+      <path d="M10 12 L34 40"/><circle cx="8" cy="10" r="4.4"/>
+    </g>
+  </svg>
+  <svg class="cursor__lens" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <circle cx="32" cy="32" r="24"/>
+    <path d="M32 2 V14 M32 50 V62 M2 32 H14 M50 32 H62"/>
+  </svg>
+</div>
 
 <header class="site-header" id="top">
   <a class="wordmark" href="#top" aria-label="Studio V.O, retour en haut de page">
@@ -65,10 +110,11 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__grain" aria-hidden="true"></div>
+    <div class="hero__grain" data-para="0.14" aria-hidden="true"></div>
+    <div class="hero__halo" data-para="0.3" aria-hidden="true"></div>
     <p class="hero__place mono">Bischheim · 67800 · Alsace</p>
 
-    <h1 class="hero__title" id="hero-title">
+    <h1 class="hero__title" id="hero-title" data-para="-0.12">
       <span class="cut" aria-hidden="true">
         <span class="cut__layer cut__layer--top"><span class="cut__l1">Studio</span><span class="cut__l2">V.O</span></span>
         <span class="cut__layer cut__layer--bottom"><span class="cut__l1">Studio</span><span class="cut__l2">V.O</span></span>
@@ -79,7 +125,7 @@
 
     <div class="hero__lede">
       <p class="hero__claim">Version originale.<br>Jamais doublée.</p>
-      <p class="hero__sub">Coupe, couleur, balayage et soin, montés plan par plan — 18 route de Bischwiller, à Bischheim.</p>
+      <p class="hero__sub vo" data-vo>Coupe, couleur, balayage et soin, montés plan par plan — 18 route de Bischwiller, à Bischheim.</p>
       <div class="hero__cta">
         <a class="btn btn--solid" href="#reservation">Réserver un créneau</a>
         <a class="btn btn--ghost" href="#prestations">Voir les tarifs</a>
@@ -99,9 +145,9 @@
     <div class="wrap">
       <p class="kicker mono" data-reveal>Bobine 00 — Le lieu</p>
       <div class="salon">
-        <h2 class="salon__title" id="salon-title" data-reveal>Un studio,<br>pas un salon.</h2>
+        <h2 class="salon__title" id="salon-title">Un studio,<br>pas un salon.</h2>
         <div class="salon__body">
-          <p class="lead" data-reveal>V.O comme version originale&nbsp;: la vôtre, pas la copie d'une photo trouvée la veille.</p>
+          <p class="lead vo" data-vo data-reveal>V.O comme version originale&nbsp;: la vôtre, pas la copie d'une photo trouvée la veille.</p>
           <p data-reveal>Un rendez-vous commence par le diagnostic — implantation, densité, historique de couleur — avant qu'un ciseau ne soit ouvert. On cherche la coupe qui tient encore trois semaines plus tard, sans produit et sans effort.</p>
           <p data-reveal>Jonathan tient le studio, entouré d'Emilie et de Julien. Trois façons de lire une chevelure, une seule exigence sur le résultat.</p>
           <ul class="facts" data-reveal>
@@ -119,8 +165,8 @@
     <div class="raccord raccord--r" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 0 L100 6"/></svg></div>
     <div class="wrap">
       <p class="kicker mono" data-reveal>Conducteur de montage</p>
-      <h2 class="section-title" id="presta-title" data-reveal>Prestations<br>&amp; tarifs</h2>
-      <p class="section-note" data-reveal>Durées réelles en fauteuil, shampooing et coiffage compris. Les tarifs couleur s'entendent hors longueurs exceptionnelles, devis annoncé avant application.</p>
+      <h2 class="section-title" id="presta-title">Prestations<br>&amp; tarifs</h2>
+      <p class="section-note vo" data-vo data-reveal>Durées réelles en fauteuil, shampooing et coiffage compris. Les tarifs couleur s'entendent hors longueurs exceptionnelles, devis annoncé avant application.</p>
 
       <div class="reel" data-reveal>
         <h3 class="reel__head"><span class="mono">Bobine 01</span> La coupe</h3>
@@ -158,7 +204,7 @@
     <div class="raccord" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 6 L100 0"/></svg></div>
     <div class="wrap">
       <p class="kicker mono" data-reveal>Générique</p>
-      <h2 class="section-title" id="equipe-title" data-reveal>Six mains,<br>trois lectures.</h2>
+      <h2 class="section-title" id="equipe-title">Six mains,<br>trois lectures.</h2>
 
       <ul class="crew">
         <li class="crew__member" data-reveal>
@@ -171,7 +217,7 @@
           </figure>
           <h3 class="crew__name">Jonathan</h3>
           <p class="crew__role mono">Gérant · Coiffeur</p>
-          <p class="crew__line">Il tient le studio et la ligne de coupe, du diagnostic à la finition.</p>
+          <p class="crew__line vo" data-vo>Il tient le studio et la ligne de coupe, du diagnostic à la finition.</p>
         </li>
         <li class="crew__member" data-reveal>
           <figure class="portrait portrait--cyan">
@@ -183,7 +229,7 @@
           </figure>
           <h3 class="crew__name">Emilie</h3>
           <p class="crew__role mono">Coiffeuse · Colorimétrie</p>
-          <p class="crew__line">La lecture du reflet : choisir le ton juste, et le tenir dans le temps.</p>
+          <p class="crew__line vo" data-vo>La lecture du reflet : choisir le ton juste, et le tenir dans le temps.</p>
         </li>
         <li class="crew__member" data-reveal>
           <figure class="portrait portrait--gold">
@@ -195,64 +241,134 @@
           </figure>
           <h3 class="crew__name">Julien</h3>
           <p class="crew__role mono">Coiffeur · Couleur &amp; balayage</p>
-          <p class="crew__line">Coloration, balayage et coupe — l'éclaircissement mené à main levée.</p>
+          <p class="crew__line vo" data-vo>Coloration, balayage et coupe — l'éclaircissement mené à main levée.</p>
         </li>
       </ul>
     </div>
   </section>
 
-  <!-- ============ GALERIE ============ -->
-  <section class="band band--dark band--cut-r" id="galerie" aria-labelledby="galerie-title">
+  <!-- ============ GALERIE — bande de projection ============ -->
+  <section class="band band--dark band--cut-r reelband" id="galerie" aria-labelledby="galerie-title">
     <div class="raccord raccord--r" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 0 L100 6"/></svg></div>
     <div class="wrap">
-      <p class="kicker mono" data-reveal>Planche contact</p>
-      <h2 class="section-title" id="galerie-title" data-reveal>Réalisations</h2>
+      <p class="kicker mono" data-reveal>Bande de projection</p>
+      <h2 class="section-title" id="galerie-title">Réalisations</h2>
+    </div>
 
-      <div class="sheet">
+    <div class="reel" id="reel">
+      <div class="reel__sticky">
         <div class="perfo" aria-hidden="true"></div>
-        <ul class="frames">
-          <li class="frame frame--tall" data-reveal><img src="img/galerie-01-640.webp"
-               srcset="img/galerie-01-320.webp 320w, img/galerie-01-640.webp 640w"
-               sizes="(min-width: 1400px) 300px, (min-width: 760px) 23vw, 45vw"
-               width="640" height="853" loading="lazy" decoding="async"
-               alt="Tresses collées prolongées de longueurs ondulées, vue de trois quarts"><span class="frame__no mono">01</span></li>
-          <li class="frame frame--wide" data-reveal><img src="img/galerie-02-1024.webp"
-               srcset="img/galerie-02-640.webp 640w, img/galerie-02-1024.webp 1024w"
-               sizes="(min-width: 1400px) 610px, (min-width: 760px) 47vw, 45vw"
-               width="1024" height="640" loading="lazy" decoding="async"
-               alt="Coupe aux ciseaux sur cheveux bruns longs, cliente en peignoir blanc"><span class="frame__no mono">02</span></li>
-          <li class="frame" data-reveal><img src="img/galerie-03-640.webp"
-               srcset="img/galerie-03-320.webp 320w, img/galerie-03-640.webp 640w"
-               sizes="(min-width: 1400px) 300px, (min-width: 760px) 23vw, 45vw"
-               width="640" height="640" loading="lazy" decoding="async"
-               alt="Ciseaux de coiffure et peigne posés côte à côte, photographie en noir et blanc"><span class="frame__no mono">03</span></li>
-          <li class="frame" data-reveal><img src="img/galerie-04-640.webp"
-               srcset="img/galerie-04-320.webp 320w, img/galerie-04-640.webp 640w"
-               sizes="(min-width: 1400px) 300px, (min-width: 760px) 23vw, 45vw"
-               width="640" height="640" loading="lazy" decoding="async"
-               alt="Rasage au rasoir droit sur une barbe savonnée"><span class="frame__no mono">04</span></li>
-          <li class="frame frame--tall" data-reveal><img src="img/galerie-05-640.webp"
-               srcset="img/galerie-05-320.webp 320w, img/galerie-05-640.webp 640w"
-               sizes="(min-width: 1400px) 300px, (min-width: 760px) 23vw, 45vw"
-               width="640" height="853" loading="lazy" decoding="async"
-               alt="Fauteuils alignés devant les miroirs du salon, en lumière naturelle"><span class="frame__no mono">05</span></li>
-          <li class="frame" data-reveal><img src="img/galerie-06-640.webp"
-               srcset="img/galerie-06-320.webp 320w, img/galerie-06-640.webp 640w"
-               sizes="(min-width: 1400px) 300px, (min-width: 760px) 23vw, 45vw"
-               width="640" height="640" loading="lazy" decoding="async"
-               alt="Brushing au sèche-cheveux sur cheveux bruns"><span class="frame__no mono">06</span></li>
-          <li class="frame frame--wide" data-reveal><img src="img/galerie-07-1024.webp"
-               srcset="img/galerie-07-640.webp 640w, img/galerie-07-1024.webp 1024w"
-               sizes="(min-width: 1400px) 610px, (min-width: 760px) 47vw, 45vw"
-               width="1024" height="640" loading="lazy" decoding="async"
-               alt="Coupe à la tondeuse sur cheveux courts, photographie en noir et blanc"><span class="frame__no mono">07</span></li>
-          <li class="frame" data-reveal><img src="img/galerie-08-640.webp"
-               srcset="img/galerie-08-320.webp 320w, img/galerie-08-640.webp 640w"
-               sizes="(min-width: 1400px) 300px, (min-width: 760px) 23vw, 45vw"
-               width="640" height="640" loading="lazy" decoding="async"
-               alt="Coupe aux ciseaux sur cheveux bouclés châtains"><span class="frame__no mono">08</span></li>
-        </ul>
+        <div class="reel__view" id="reel-track" tabindex="0" role="region"
+             aria-label="Bande des réalisations, huit plans, défilement horizontal">
+        <ol class="reel__list">
+        <li class="plan plan--haut">
+          <figure class="plan__frame">
+            <img src="img/galerie-01-640.webp"
+             srcset="img/galerie-01-320.webp 320w, img/galerie-01-640.webp 640w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="640" height="853" loading="lazy" decoding="async"
+             alt="Tresses collées prolongées de longueurs ondulées, vue de trois quarts">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 01</span>
+              <span class="plan__leg">Tresses collées</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--large">
+          <figure class="plan__frame">
+            <img src="img/galerie-02-1024.webp"
+             srcset="img/galerie-02-640.webp 640w, img/galerie-02-1024.webp 1024w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="1024" height="640" loading="lazy" decoding="async"
+             alt="Coupe aux ciseaux sur cheveux bruns longs, cliente en peignoir blanc">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 02</span>
+              <span class="plan__leg">Coupe aux ciseaux</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--carre">
+          <figure class="plan__frame">
+            <img src="img/galerie-03-640.webp"
+             srcset="img/galerie-03-320.webp 320w, img/galerie-03-640.webp 640w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="640" height="640" loading="lazy" decoding="async"
+             alt="Ciseaux de coiffure et peigne posés côte à côte, photographie en noir et blanc">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 03</span>
+              <span class="plan__leg">Ciseaux et peigne</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--carre">
+          <figure class="plan__frame">
+            <img src="img/galerie-04-640.webp"
+             srcset="img/galerie-04-320.webp 320w, img/galerie-04-640.webp 640w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="640" height="640" loading="lazy" decoding="async"
+             alt="Rasage au rasoir droit sur une barbe savonnée">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 04</span>
+              <span class="plan__leg">Rasage au rasoir droit</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--haut">
+          <figure class="plan__frame">
+            <img src="img/galerie-05-640.webp"
+             srcset="img/galerie-05-320.webp 320w, img/galerie-05-640.webp 640w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="640" height="853" loading="lazy" decoding="async"
+             alt="Fauteuils alignés devant les miroirs du salon, en lumière naturelle">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 05</span>
+              <span class="plan__leg">Le studio, en lumière du jour</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--carre">
+          <figure class="plan__frame">
+            <img src="img/galerie-06-640.webp"
+             srcset="img/galerie-06-320.webp 320w, img/galerie-06-640.webp 640w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="640" height="640" loading="lazy" decoding="async"
+             alt="Brushing au sèche-cheveux sur cheveux bruns">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 06</span>
+              <span class="plan__leg">Brushing</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--large">
+          <figure class="plan__frame">
+            <img src="img/galerie-07-1024.webp"
+             srcset="img/galerie-07-640.webp 640w, img/galerie-07-1024.webp 1024w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="1024" height="640" loading="lazy" decoding="async"
+             alt="Coupe à la tondeuse sur cheveux courts, photographie en noir et blanc">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 07</span>
+              <span class="plan__leg">Tondeuse, coupe courte</span>
+            </figcaption>
+          </figure>
+        </li>
+        <li class="plan plan--carre">
+          <figure class="plan__frame">
+            <img src="img/galerie-08-640.webp"
+             srcset="img/galerie-08-320.webp 320w, img/galerie-08-640.webp 640w"
+             sizes="(min-width: 900px) 46vh, 62vw"
+             width="640" height="640" loading="lazy" decoding="async"
+             alt="Coupe aux ciseaux sur cheveux bouclés châtains">
+            <figcaption class="plan__cap">
+              <span class="mono">Plan 08</span>
+              <span class="plan__leg">Boucles aux ciseaux</span>
+            </figcaption>
+          </figure>
+        </li>
+        </ol>
+        </div>
         <div class="perfo" aria-hidden="true"></div>
+        <p class="reel__hint mono" aria-hidden="true"><span>Défilez</span><span class="reel__bar"><i id="reel-bar"></i></span><span id="reel-count">01 / 08</span></p>
       </div>
     </div>
   </section>
@@ -262,7 +378,7 @@
     <div class="raccord" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 6 L100 0"/></svg></div>
     <div class="wrap">
       <p class="kicker mono" data-reveal>Clap de fin</p>
-      <h2 class="section-title" id="resa-title" data-reveal>Réserver</h2>
+      <h2 class="section-title" id="resa-title">Réserver</h2>
 
       <div class="resa">
         <div class="resa__info">
@@ -374,6 +490,26 @@
 
 <footer class="site-footer">
   <div class="raccord raccord--r" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 0 L100 6"/></svg></div>
+
+  <section class="credits" id="credits" aria-labelledby="credits-title">
+    <h2 class="sr-only" id="credits-title">Générique</h2>
+    <div class="credits__viewport">
+      <div class="credits__roll" id="credits-roll">
+        <dl class="credits__list">
+          <div><dt>Réalisation</dt><dd>Studio V.O</dd></div>
+          <div><dt>Direction de la coupe</dt><dd>Jonathan</dd></div>
+          <div><dt>Colorimétrie</dt><dd>Emilie</dd></div>
+          <div><dt>Couleur &amp; balayage</dt><dd>Julien</dd></div>
+          <div><dt>Décor</dt><dd>18 route de Bischwiller, Bischheim</dd></div>
+          <div><dt>Séances</dt><dd>Mardi — Samedi, nocturnes jeudi et vendredi</dd></div>
+          <div><dt>Version</dt><dd>Originale, jamais doublée</dd></div>
+          <div><dt>Dans son propre rôle</dt><dd>Vous</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="credits__note mono">Générique en boucle — survolez pour l'arrêter</p>
+  </section>
+
   <div class="wrap footer__grid">
     <div>
       <p class="footer__mark">Studio&nbsp;V.O</p>
