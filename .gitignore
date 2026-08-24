@@ -1,0 +1,5 @@
+# Secrets locaux — jamais poussés
+# La clé d'API 21st.dev vit ici, .mcp.json ne fait qu'y référence via ${TWENTYFIRST_API_KEY}
+.claude/settings.local.json
+.env
+.env.local
