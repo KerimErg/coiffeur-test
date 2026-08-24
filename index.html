@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Coiffeur Bischheim — Studio V.O | Salon de coiffure premium 67800</title>
 <meta name="description" content="Studio V.O, salon de coiffure à Bischheim (67800) : coupe, couleur, balayage, barbe et soins. 18 route de Bischwiller, ouvert du mardi au samedi, nocturnes jeudi et vendredi. 03 88 19 99 52.">
-<meta name="theme-color" content="#141C33">
+<meta name="theme-color" content="#14100E">
 <link rel="canonical" href="https://kerimerg.github.io/coiffeur-test/">
 
 <meta property="og:type" content="website">
@@ -22,56 +22,47 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Big+Shoulders+Display:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..600&family=Instrument+Sans:wght@400..600&display=swap">
 <link rel="stylesheet" href="style.css">
 <script>
-/* Décide AVANT peinture si la séance s'ouvre : évite de montrer l'amorce
+/* Décide AVANT peinture si l'ouverture se joue : évite de la montrer
    à quelqu'un qui revient, et d'en faire clignoter une trace sinon. */
 (function(){var d=document.documentElement;d.classList.add('js');try{
   var c=navigator.connection;
-  if(!sessionStorage.getItem('vo-seance')                       /* déjà vue dans la session */
+  if(!sessionStorage.getItem('vo-ouverture')                    /* déjà vue dans la session */
      && !matchMedia('(prefers-reduced-motion: reduce)').matches /* mouvement refusé */
      && !location.hash                                          /* on arrive droit sur les tarifs ou la réservation */
      && !(c && (c.saveData || /2g/.test(c.effectiveType||''))))  /* connexion contrainte */
-    d.classList.add('is-seance');
+    d.classList.add('is-ouverture');
 }catch(e){}})();
 </script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141C33'/%3E%3Cpath d='M4 24 L28 8' stroke='%23B8336A' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2314100E'/%3E%3Cpath d='M16 2 C9 10 23 20 16 30' fill='none' stroke='%23C2703C' stroke-width='2.4'/%3E%3C/svg%3E">
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
 
-<div class="amorce" id="amorce" aria-hidden="true">
-  <div class="amorce__stage">
-    <svg class="amorce__leader" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
-      <circle class="amorce__ring" cx="120" cy="120" r="104"/>
-      <circle class="amorce__sweep" cx="120" cy="120" r="104"/>
-      <path class="amorce__cross" d="M120 4 V236 M4 120 H236"/>
-      <path class="amorce__diag" d="M28 28 L212 212 M212 28 L28 212"/>
-    </svg>
-    <p class="amorce__count" id="amorce-count">3</p>
-  </div>
-  <p class="amorce__scratch" aria-hidden="true"><span></span><span></span><span></span></p>
-  <button class="amorce__skip" id="amorce-skip" type="button">Passer l'amorce</button>
-  <div class="amorce__flash" aria-hidden="true"></div>
+<!-- ============ OUVERTURE — le fil se tend ============ -->
+<div class="ouverture" id="ouverture" aria-hidden="true">
+  <svg class="ouverture__svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path class="ouverture__fil" pathLength="1" d="M500 -60 C 500 240, 330 380, 420 560 C 500 720, 150 830, 100 1060"/>
+  </svg>
+  <p class="ouverture__mark"><span>Studio</span><em>V.O</em></p>
+  <button class="ouverture__skip" id="ouverture-skip" type="button">Passer l'ouverture</button>
 </div>
 
-<canvas class="grain" id="grain" aria-hidden="true"></canvas>
+<!-- ============ LE FIL — signature : une seule mèche traverse le site ============ -->
+<svg class="fil" id="fil" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  <path class="fil__ombre" id="fil-ombre" fill="none"/>
+  <path class="fil__trace" id="fil-trace" pathLength="1" fill="none"/>
+  <g class="fil__noeuds" id="fil-noeuds"></g>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="lumiere" id="lumiere" aria-hidden="true"></div>
 
 <div class="cursor" id="cursor" aria-hidden="true">
   <span class="cursor__dot"></span>
-  <svg class="cursor__blades" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-    <g class="cursor__blade cursor__blade--a">
-      <path d="M10 40 L34 12"/><circle cx="8" cy="42" r="4.4"/>
-    </g>
-    <g class="cursor__blade cursor__blade--b">
-      <path d="M10 12 L34 40"/><circle cx="8" cy="10" r="4.4"/>
-    </g>
-  </svg>
-  <svg class="cursor__lens" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-    <circle cx="32" cy="32" r="24"/>
-    <path d="M32 2 V14 M32 50 V62 M2 32 H14 M50 32 H62"/>
-  </svg>
+  <span class="cursor__ring"></span>
 </div>
 
 <header class="site-header" id="top">
@@ -85,15 +76,15 @@
     <a href="#galerie">Galerie</a>
   </nav>
   <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="chapitres">
-    <span class="menu-btn__label">Chapitres</span>
+    <span class="menu-btn__label">Sommaire</span>
     <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span></span>
   </button>
   <a class="btn btn--solid btn--sm" href="#reservation">Réserver</a>
 </header>
 
 <div class="chapters" id="chapitres" hidden>
-  <nav class="chapters__nav" aria-label="Chapitres du site">
-    <a href="#top"><span class="mono">00</span> Générique</a>
+  <nav class="chapters__nav" aria-label="Sommaire du site">
+    <a href="#top"><span class="mono">00</span> Ouverture</a>
     <a href="#salon"><span class="mono">01</span> Le salon</a>
     <a href="#prestations"><span class="mono">02</span> Prestations &amp; tarifs</a>
     <a href="#equipe"><span class="mono">03</span> L'équipe</a>
@@ -109,22 +100,21 @@
 <main id="main">
 
   <!-- ============ HERO ============ -->
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__grain" data-para="0.14" aria-hidden="true"></div>
-    <div class="hero__halo" data-para="0.3" aria-hidden="true"></div>
+  <section class="hero" aria-labelledby="hero-title" data-fil="0.08">
+    <div class="hero__glow" data-para="0.16" aria-hidden="true"></div>
+    <div class="wrap hero__inner">
     <p class="hero__place mono">Bischheim · 67800 · Alsace</p>
 
-    <h1 class="hero__title" id="hero-title" data-para="-0.12">
-      <span class="cut" aria-hidden="true">
-        <span class="cut__layer cut__layer--top"><span class="cut__l1">Studio</span><span class="cut__l2">V.O</span></span>
-        <span class="cut__layer cut__layer--bottom"><span class="cut__l1">Studio</span><span class="cut__l2">V.O</span></span>
-        <svg class="cut__blade" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M-4 63.1 L104 32.9"/></svg>
+    <h1 class="hero__title" id="hero-title">
+      <span class="hero__word" aria-hidden="true">
+        <span class="hero__l1">Studio</span>
+        <span class="hero__l2"><i>V</i><span class="hero__pt">.</span><i>O</i></span>
       </span>
       <span class="sr-only">Studio V.O — salon de coiffure à Bischheim</span>
     </h1>
 
     <div class="hero__lede">
-      <p class="hero__claim">Version originale.<br>Jamais doublée.</p>
+      <p class="hero__claim">Version originale.<br><em>Jamais doublée.</em></p>
       <p class="hero__sub vo" data-vo>Coupe, couleur, balayage et soin, montés plan par plan — 18 route de Bischwiller, à Bischheim.</p>
       <div class="hero__cta">
         <a class="btn btn--solid" href="#reservation">Réserver un créneau</a>
@@ -133,19 +123,19 @@
     </div>
 
     <div class="hero__foot mono" aria-hidden="true">
-      <span>00:00</span>
+      <span>Faites défiler</span>
       <span class="hero__rule"></span>
-      <span>défilez</span>
+      <span>01 — Le lieu</span>
+    </div>
     </div>
   </section>
 
   <!-- ============ LE SALON ============ -->
-  <section class="band band--light band--cut-l" id="salon" aria-labelledby="salon-title">
-    <div class="raccord" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 6 L100 0"/></svg></div>
+  <section class="band band--light" id="salon" aria-labelledby="salon-title" data-fil="0.08">
     <div class="wrap">
-      <p class="kicker mono" data-reveal>Bobine 00 — Le lieu</p>
+      <p class="kicker mono" data-reveal>Chapitre 01 — Le lieu</p>
       <div class="salon">
-        <h2 class="salon__title" id="salon-title">Un studio,<br>pas un salon.</h2>
+        <h2 class="salon__title" id="salon-title">Un studio,<br><em>pas un salon.</em></h2>
         <div class="salon__body">
           <p class="lead vo" data-vo data-reveal>V.O comme version originale&nbsp;: la vôtre, pas la copie d'une photo trouvée la veille.</p>
           <p data-reveal>Un rendez-vous commence par le diagnostic — implantation, densité, historique de couleur — avant qu'un ciseau ne soit ouvert. On cherche la coupe qui tient encore trois semaines plus tard, sans produit et sans effort.</p>
@@ -161,54 +151,52 @@
   </section>
 
   <!-- ============ PRESTATIONS ============ -->
-  <section class="band band--dark band--cut-r" id="prestations" aria-labelledby="presta-title">
-    <div class="raccord raccord--r" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 0 L100 6"/></svg></div>
+  <section class="band band--dark" id="prestations" aria-labelledby="presta-title" data-fil="0.08">
     <div class="wrap">
-      <p class="kicker mono" data-reveal>Conducteur de montage</p>
-      <h2 class="section-title" id="presta-title">Prestations<br>&amp; tarifs</h2>
+      <p class="kicker mono" data-reveal>Chapitre 02 — La carte</p>
+      <h2 class="section-title" id="presta-title">Prestations<br><em>&amp; tarifs</em></h2>
       <p class="section-note vo" data-vo data-reveal>Durées réelles en fauteuil, shampooing et coiffage compris. Les tarifs couleur s'entendent hors longueurs exceptionnelles, devis annoncé avant application.</p>
 
-      <div class="reel" data-reveal>
-        <h3 class="reel__head"><span class="mono">Bobine 01</span> La coupe</h3>
+      <div class="carte" data-reveal>
+        <h3 class="carte__head"><span class="mono">I</span> La coupe</h3>
         <ul class="lines">
-          <li class="line"><span class="line__name">Coupe femme</span><span class="line__desc">Diagnostic, shampooing rituel, coupe, coiffage</span><span class="line__time mono">01:15</span><span class="line__price mono">58&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Coupe homme</span><span class="line__desc">Ciseau ou tondeuse, contours nets, finition</span><span class="line__time mono">00:45</span><span class="line__price mono">35&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Coupe enfant</span><span class="line__desc">Jusqu'à 12 ans, à son rythme</span><span class="line__time mono">00:30</span><span class="line__price mono">24&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Barbe &amp; rasage</span><span class="line__desc">Taille au ciseau, serviette chaude, rasoir droit</span><span class="line__time mono">00:30</span><span class="line__price mono">28&nbsp;€</span></li>
+          <li class="line"><span class="line__name">Coupe femme</span><span class="line__desc">Diagnostic, shampooing rituel, coupe, coiffage</span><span class="line__time mono">01:15</span><span class="line__price"><span class="line__n">58</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Coupe homme</span><span class="line__desc">Ciseau ou tondeuse, contours nets, finition</span><span class="line__time mono">00:45</span><span class="line__price"><span class="line__n">35</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Coupe enfant</span><span class="line__desc">Jusqu'à 12 ans, à son rythme</span><span class="line__time mono">00:30</span><span class="line__price"><span class="line__n">24</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Barbe &amp; rasage</span><span class="line__desc">Taille au ciseau, serviette chaude, rasoir droit</span><span class="line__time mono">00:30</span><span class="line__price"><span class="line__n">28</span><span class="line__cur">€</span></span></li>
         </ul>
       </div>
 
-      <div class="reel" data-reveal>
-        <h3 class="reel__head"><span class="mono">Bobine 02</span> La couleur</h3>
+      <div class="carte" data-reveal>
+        <h3 class="carte__head"><span class="mono">II</span> La couleur</h3>
         <ul class="lines">
-          <li class="line"><span class="line__name">Couleur racines</span><span class="line__desc">Ton sur ton ou couverture, sans ammoniaque</span><span class="line__time mono">01:30</span><span class="line__price mono">62&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Balayage / ombré</span><span class="line__desc">Éclaircissement à main levée, patine incluse</span><span class="line__time mono">03:00</span><span class="line__price mono">130&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Patine &amp; gloss</span><span class="line__desc">Correction de reflet, brillance immédiate</span><span class="line__time mono">00:45</span><span class="line__price mono">45&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Décoloration complète</span><span class="line__desc">Sur devis après test de mèche obligatoire</span><span class="line__time mono">04:00</span><span class="line__price mono">dès 180&nbsp;€</span></li>
+          <li class="line"><span class="line__name">Couleur racines</span><span class="line__desc">Ton sur ton ou couverture, sans ammoniaque</span><span class="line__time mono">01:30</span><span class="line__price"><span class="line__n">62</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Balayage / ombré</span><span class="line__desc">Éclaircissement à main levée, patine incluse</span><span class="line__time mono">03:00</span><span class="line__price"><span class="line__n">130</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Patine &amp; gloss</span><span class="line__desc">Correction de reflet, brillance immédiate</span><span class="line__time mono">00:45</span><span class="line__price"><span class="line__n">45</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Décoloration complète</span><span class="line__desc">Sur devis après test de mèche obligatoire</span><span class="line__time mono">04:00</span><span class="line__price"><span class="line__pre">dès</span><span class="line__n">180</span><span class="line__cur">€</span></span></li>
         </ul>
       </div>
 
-      <div class="reel" data-reveal>
-        <h3 class="reel__head"><span class="mono">Bobine 03</span> Le soin &amp; le rituel</h3>
+      <div class="carte" data-reveal>
+        <h3 class="carte__head"><span class="mono">III</span> Le soin &amp; le rituel</h3>
         <ul class="lines">
-          <li class="line"><span class="line__name">Soin profond</span><span class="line__desc">Reconstruction fibre, pose vapeur, massage</span><span class="line__time mono">00:30</span><span class="line__price mono">38&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Brushing / coiffage</span><span class="line__desc">Mise en forme seule, sans coupe</span><span class="line__time mono">00:40</span><span class="line__price mono">32&nbsp;€</span></li>
-          <li class="line"><span class="line__name">Mise en beauté</span><span class="line__desc">Chignon, attaché, essai inclus sur demande</span><span class="line__time mono">01:30</span><span class="line__price mono">90&nbsp;€</span></li>
+          <li class="line"><span class="line__name">Soin profond</span><span class="line__desc">Reconstruction fibre, pose vapeur, massage</span><span class="line__time mono">00:30</span><span class="line__price"><span class="line__n">38</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Brushing / coiffage</span><span class="line__desc">Mise en forme seule, sans coupe</span><span class="line__time mono">00:40</span><span class="line__price"><span class="line__n">32</span><span class="line__cur">€</span></span></li>
+          <li class="line"><span class="line__name">Mise en beauté</span><span class="line__desc">Chignon, attaché, essai inclus sur demande</span><span class="line__time mono">01:30</span><span class="line__price"><span class="line__n">90</span><span class="line__cur">€</span></span></li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- ============ EQUIPE ============ -->
-  <section class="band band--light band--cut-l" id="equipe" aria-labelledby="equipe-title">
-    <div class="raccord" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 6 L100 0"/></svg></div>
+  <section class="band band--light" id="equipe" aria-labelledby="equipe-title" data-fil="0.07">
     <div class="wrap">
-      <p class="kicker mono" data-reveal>Générique</p>
-      <h2 class="section-title" id="equipe-title">Six mains,<br>trois lectures.</h2>
+      <p class="kicker mono" data-reveal>Chapitre 03 — Les mains</p>
+      <h2 class="section-title" id="equipe-title">Six mains,<br><em>trois lectures.</em></h2>
 
       <ul class="crew">
         <li class="crew__member" data-reveal>
-          <figure class="portrait portrait--magenta">
+          <figure class="portrait">
             <img src="img/equipe-jonathan-800.webp"
                  srcset="img/equipe-jonathan-400.webp 400w, img/equipe-jonathan-800.webp 800w"
                  sizes="(min-width: 900px) 27vw, (min-width: 560px) 45vw, 90vw"
@@ -220,7 +208,7 @@
           <p class="crew__line vo" data-vo>Il tient le studio et la ligne de coupe, du diagnostic à la finition.</p>
         </li>
         <li class="crew__member" data-reveal>
-          <figure class="portrait portrait--cyan">
+          <figure class="portrait">
             <img src="img/equipe-emilie-800.webp"
                  srcset="img/equipe-emilie-400.webp 400w, img/equipe-emilie-800.webp 800w"
                  sizes="(min-width: 900px) 27vw, (min-width: 560px) 45vw, 90vw"
@@ -232,7 +220,7 @@
           <p class="crew__line vo" data-vo>La lecture du reflet : choisir le ton juste, et le tenir dans le temps.</p>
         </li>
         <li class="crew__member" data-reveal>
-          <figure class="portrait portrait--gold">
+          <figure class="portrait">
             <img src="img/equipe-julien-800.webp"
                  srcset="img/equipe-julien-400.webp 400w, img/equipe-julien-800.webp 800w"
                  sizes="(min-width: 900px) 27vw, (min-width: 560px) 45vw, 90vw"
@@ -247,19 +235,18 @@
     </div>
   </section>
 
-  <!-- ============ GALERIE — bande de projection ============ -->
-  <section class="band band--dark band--cut-r reelband" id="galerie" aria-labelledby="galerie-title">
-    <div class="raccord raccord--r" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 0 L100 6"/></svg></div>
+  <!-- ============ GALERIE — les mèches suspendues au rail ============ -->
+  <section class="band band--dark reelband" id="galerie" aria-labelledby="galerie-title" data-fil="0.08">
     <div class="wrap">
-      <p class="kicker mono" data-reveal>Bande de projection</p>
+      <p class="kicker mono" data-reveal>Chapitre 04 — Le fil des réalisations</p>
       <h2 class="section-title" id="galerie-title">Réalisations</h2>
     </div>
 
     <div class="reel" id="reel">
       <div class="reel__sticky">
-        <div class="perfo" aria-hidden="true"></div>
+        <div class="rail" aria-hidden="true"></div>
         <div class="reel__view" id="reel-track" tabindex="0" role="region"
-             aria-label="Bande des réalisations, huit plans, défilement horizontal">
+             aria-label="Les réalisations, huit photographies, défilement horizontal">
         <ol class="reel__list">
         <li class="plan plan--haut">
           <figure class="plan__frame">
@@ -269,7 +256,7 @@
              width="640" height="853" loading="lazy" decoding="async"
              alt="Tresses collées prolongées de longueurs ondulées, vue de trois quarts">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 01</span>
+              <span class="mono">Nº 01</span>
               <span class="plan__leg">Tresses collées</span>
             </figcaption>
           </figure>
@@ -282,7 +269,7 @@
              width="1024" height="640" loading="lazy" decoding="async"
              alt="Coupe aux ciseaux sur cheveux bruns longs, cliente en peignoir blanc">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 02</span>
+              <span class="mono">Nº 02</span>
               <span class="plan__leg">Coupe aux ciseaux</span>
             </figcaption>
           </figure>
@@ -295,7 +282,7 @@
              width="640" height="640" loading="lazy" decoding="async"
              alt="Ciseaux de coiffure et peigne posés côte à côte, photographie en noir et blanc">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 03</span>
+              <span class="mono">Nº 03</span>
               <span class="plan__leg">Ciseaux et peigne</span>
             </figcaption>
           </figure>
@@ -308,7 +295,7 @@
              width="640" height="640" loading="lazy" decoding="async"
              alt="Rasage au rasoir droit sur une barbe savonnée">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 04</span>
+              <span class="mono">Nº 04</span>
               <span class="plan__leg">Rasage au rasoir droit</span>
             </figcaption>
           </figure>
@@ -321,7 +308,7 @@
              width="640" height="853" loading="lazy" decoding="async"
              alt="Fauteuils alignés devant les miroirs du salon, en lumière naturelle">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 05</span>
+              <span class="mono">Nº 05</span>
               <span class="plan__leg">Le studio, en lumière du jour</span>
             </figcaption>
           </figure>
@@ -334,7 +321,7 @@
              width="640" height="640" loading="lazy" decoding="async"
              alt="Brushing au sèche-cheveux sur cheveux bruns">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 06</span>
+              <span class="mono">Nº 06</span>
               <span class="plan__leg">Brushing</span>
             </figcaption>
           </figure>
@@ -347,7 +334,7 @@
              width="1024" height="640" loading="lazy" decoding="async"
              alt="Coupe à la tondeuse sur cheveux courts, photographie en noir et blanc">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 07</span>
+              <span class="mono">Nº 07</span>
               <span class="plan__leg">Tondeuse, coupe courte</span>
             </figcaption>
           </figure>
@@ -360,24 +347,22 @@
              width="640" height="640" loading="lazy" decoding="async"
              alt="Coupe aux ciseaux sur cheveux bouclés châtains">
             <figcaption class="plan__cap">
-              <span class="mono">Plan 08</span>
+              <span class="mono">Nº 08</span>
               <span class="plan__leg">Boucles aux ciseaux</span>
             </figcaption>
           </figure>
         </li>
         </ol>
         </div>
-        <div class="perfo" aria-hidden="true"></div>
         <p class="reel__hint mono" aria-hidden="true"><span>Défilez</span><span class="reel__bar"><i id="reel-bar"></i></span><span id="reel-count">01 / 08</span></p>
       </div>
     </div>
   </section>
 
   <!-- ============ RESERVATION ============ -->
-  <section class="band band--light band--cut-l" id="reservation" aria-labelledby="resa-title">
-    <div class="raccord" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 6 L100 0"/></svg></div>
+  <section class="band band--light" id="reservation" aria-labelledby="resa-title" data-fil="0.07">
     <div class="wrap">
-      <p class="kicker mono" data-reveal>Clap de fin</p>
+      <p class="kicker mono" data-reveal>Chapitre 05 — Le rendez-vous</p>
       <h2 class="section-title" id="resa-title">Réserver</h2>
 
       <div class="resa">
@@ -413,19 +398,20 @@
             <h3 class="info-block__h mono">Plan d'accès</h3>
             <div class="map-card">
             <svg class="map" viewBox="0 0 400 260" role="img" aria-label="Plan d'accès simplifié : le Studio V.O se situe au 18 route de Bischwiller, à Bischheim.">
-              <rect width="400" height="260" fill="#0D1426"/>
-              <g stroke="#2C3A5C" stroke-width="16" stroke-linecap="square">
+              <rect width="400" height="260" fill="#0B0908"/>
+              <g stroke="#2E2622" stroke-width="16" stroke-linecap="square">
                 <path d="M-10 170 H410"/>
               </g>
-              <g stroke="#1F2B47" stroke-width="7">
+              <g stroke="#221C18" stroke-width="7">
                 <path d="M120 -10 V270"/><path d="M300 170 V270"/><path d="M230 -10 V170"/>
               </g>
-              <text x="14" y="196" fill="#8A93A8" font-family="IBM Plex Mono, monospace" font-size="12">ROUTE DE BISCHWILLER</text>
+              <text x="14" y="196" fill="#A79A8C" font-family="Instrument Sans, sans-serif" font-size="11" letter-spacing="1.6">ROUTE DE BISCHWILLER</text>
               <g transform="translate(252,170)">
-                <circle r="13" fill="#B8336A"/>
-                <path d="M-18 18 L18 -18" stroke="#E9ECF2" stroke-width="2"/>
-                <text x="-38" y="-30" fill="#E9ECF2" font-family="Archivo, sans-serif" font-size="15" font-weight="600">Studio V.O</text>
-                <text x="-38" y="-14" fill="#D9B36C" font-family="IBM Plex Mono, monospace" font-size="11">N° 18</text>
+                <circle r="13" fill="#C2703C"/>
+                <circle r="24" fill="none" stroke="#C2703C" stroke-width="1" opacity=".45"/>
+                <path d="M0 -13 C -14 4, 14 22, 0 40" fill="none" stroke="#F4EFE7" stroke-width="1.6"/>
+                <text x="-38" y="-34" fill="#F4EFE7" font-family="Bodoni Moda, serif" font-size="18">Studio V.O</text>
+                <text x="-38" y="-18" fill="#E0996A" font-family="Instrument Sans, sans-serif" font-size="10" letter-spacing="1.6">Nº 18</text>
               </g>
             </svg>
             <a class="map-card__go" href="https://www.google.com/maps/dir/?api=1&amp;destination=48.6121619%2C7.7513926" target="_blank" rel="noopener">
@@ -488,8 +474,7 @@
   </section>
 </main>
 
-<footer class="site-footer">
-  <div class="raccord raccord--r" aria-hidden="true"><svg viewBox="0 0 100 6" preserveAspectRatio="none"><path d="M0 0 L100 6"/></svg></div>
+<footer class="site-footer" data-fil="0.08">
 
   <section class="credits" id="credits" aria-labelledby="credits-title">
     <h2 class="sr-only" id="credits-title">Générique</h2>
